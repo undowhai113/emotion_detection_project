@@ -1,6 +1,4 @@
-Xin lỗi về sự chia nhỏ trước đó! Dưới đây là toàn bộ nội dung bạn có thể sao chép vào một cell duy nhất:
 
-```markdown
 # Emotion Detection Project
 
 This project builds a facial emotion recognition model using Transfer Learning based on the FER-2013 dataset.
