@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nhận diện cảm xúc</title>
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
+    video, canvas { border: 1px solid #ccc; margin: 10px auto; display: block; }
+  </style>
+</head>
+<body>
+  <h2>Khám phá cảm xúc của bạn</h2>
+  <p id="result">Đang dự đoán...</p>
+  <video id="video" width="300" height="225" autoplay></video>
+  <canvas id="canvas" width="224" height="224" style="display: none;"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+    const context = canvas.getContext('2d');
+
+    // Bật webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error("Error accessing webcam: " + err);
+      });
+
+    // Gửi ảnh định kỳ lên API để dự đoán
+    setInterval(() => {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL('image/jpeg');
+      fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData })
+      })
+      .then(response => response.json())
+      .then(data => {
+        result.textContent = `${data.emotion} - ${data.message}`;
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+    }, 3000); // mỗi 3 giây gửi 1 lần
+  </script>
+</body>
+</html>
